@@ -5,9 +5,12 @@ var $divResults = $('.results');
 
 
 $button.on("click", function(e) {
-
+  $('.row').empty();
   //e.preventDefault();
-  var $inputValue = $('#query').val();
+  var $inputValue = ($('#query').val()).toString();
+  $inputValue = $inputValue.replace(" ", "+");
+
+  //$inputValue = $inputValue.toString();
   /*var sArtistToFind = $inputValue.val();*/
   //var sGetArtistsUrl = "https://api.spotify.com/v1/search?type=artist&query=" + sArtistToFind;
 
@@ -31,7 +34,7 @@ $.ajax({
    	dataType: 'json',
    	data: {
      	type: "artist",
-      	query : $inputValue
+      query : $inputValue
     },
    headers: {
        'Authorization': 'Bearer ' + access_token
@@ -48,12 +51,20 @@ $.ajax({
     
      $divResults.css('border', '1px solid #000');
 
-     var lengthArtist = response.artists.items.length;
+     //var artist = response.artists.items;
+     console.log(response.artists.items);
+     var artistList = response.artists.items;
 
-     for (var i = 0; i < lengthArtist; i++){
-       $('.listArtistName').append(
-              '<li>'+ response.artists.items[i].name + '</li>');
-     }
+
+     artistList.forEach ( function (artist){
+      if (artist.images.length !== 0){
+          $('.row').append(
+          '<div class="col-4" style="margin-left:15px"><img style="width:200px;" src=' + artist.images[0].url + '> </div>'
+              );
+      }
+
+    });
+    
 
     
     if(textStatus === 'error') {
