@@ -3,10 +3,11 @@
 var $button = $('#search');
 var $divResults = $('.results');
 
+
 $button.on("click", function(e) {
 
   //e.preventDefault();
-  var $inputValue = $('#query').value;  
+  var $inputValue = $('#query').val();
   /*var sArtistToFind = $inputValue.val();*/
   //var sGetArtistsUrl = "https://api.spotify.com/v1/search?type=artist&query=" + sArtistToFind;
 
@@ -30,31 +31,38 @@ $.ajax({
    	dataType: 'json',
    	data: {
      	type: "artist",
-      	query : 'beyonce'
+      	query : $inputValue
     },
    headers: {
        'Authorization': 'Bearer ' + access_token
    },
-   success: function(response) {      
-   			console.log('hola');   	
-  			$divResults.load('https://api.spotify.com/v1/search?type=artist&query=beyonce',completeFunction);   
+   success: function(response) {    
+  			$.get('https://api.spotify.com/v1/search?type=artist&query='+$inputValue, completeFunction);   
 
   
    }
 });
 });
 
-  function completeFunction(responseText, textStatus, request) {
+  function completeFunction(response, textStatus, request) {
     
      $divResults.css('border', '1px solid #000');
-   
-    console.log(request);
-    console.log(JSON.parse(responseText))
+
+     var lengthArtist = response.artists.items.length;
+
+     for (var i = 0; i < lengthArtist; i++){
+       $('.listArtistName').append(
+              '<li>'+ response.artists.items[i].name + '</li>');
+     }
+
+    
     if(textStatus === 'error') {
    	
-      $divResults.text('Error del GÚENOOORL ' + request.status + ' ' + request.statusText);
+      $divResults.text('Error ' + request.status + ' ' + request.statusText);
     } 
   }
+
+
 
 
 })(jQuery);
