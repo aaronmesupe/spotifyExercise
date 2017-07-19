@@ -7,8 +7,8 @@ var $divResults = $('.results');
 $button.on("click", function(e) {
   $('.row').empty();
   //e.preventDefault();
-  var $inputValue = ($('#query').val()).toString();
-  $inputValue = $inputValue.replace(" ", "+");
+  var $inputValue = $('#query').val();
+ 
 
   //$inputValue = $inputValue.toString();
   /*var sArtistToFind = $inputValue.val();*/
@@ -30,17 +30,14 @@ $button.on("click", function(e) {
 
 $.ajax({
 	metod : 'GET',
-   	url: 'https://api.spotify.com/v1/search',
+   	url: 'https://api.spotify.com/v1/search?type=artist&query='+ $inputValue, 
    	dataType: 'json',
-   	data: {
-     	type: "artist",
-      query : $inputValue
-    },
+
    headers: {
        'Authorization': 'Bearer ' + access_token
    },
    success: function(response) {    
-  			$.get('https://api.spotify.com/v1/search?type=artist&query='+$inputValue, completeFunction);   
+  			$.get('https://api.spotify.com/v1/search?type=artist&query='+ $inputValue, completeFunction);   
 
   
    }
@@ -49,21 +46,34 @@ $.ajax({
 
   function completeFunction(response, textStatus, request) {
     
-     $divResults.css('border', '1px solid #000');
-
-     //var artist = response.artists.items;
-     console.log(response.artists.items);
+     $divResults.css('border', '1px solid #000');    
+     
      var artistList = response.artists.items;
-
+     console.log(artistList);  
+        
+        function albums(id) {
+            console.log(id);
+          }; 
 
      artistList.forEach ( function (artist){
       if (artist.images.length !== 0){
           $('.row').append(
-          '<div class="col-4" style="margin-left:15px"><img style="width:200px;" src=' + artist.images[0].url + '> </div>'
+          '<div class="col-md-3" style="margin-left:15px"><img onclick="albums('+artist.id+')" style="width:200px;" src=' 
+           + artist.images[0].url + '> ' + artist.id + ' </div>'
               );
-      }
+          var artistId = artist.id;
+          console.log(artistId);
 
+  
+
+      }
     });
+
+
+
+
+
+
     
 
     
